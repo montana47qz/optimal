@@ -1,6 +1,6 @@
 // Вставь свой токен бота и chat_id здесь
 const TELEGRAM_BOT_TOKEN = '8401480098:AAEDUGA6oI06DzV7gDw3OqII6AFlmNpv4oE';
-const TELEGRAM_CHAT_ID = '2729269078';
+const TELEGRAM_CHAT_ID = '-1002729269078';
 
 export async function handleRequest(request) {
   if (request.method === 'POST') {
